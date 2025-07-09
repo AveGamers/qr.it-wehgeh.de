@@ -18,6 +18,9 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        .title-glow {
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+        }
         /* Style for the active tab */
         .tab-active {
             background-color: #3b82f6; /* bg-blue-500 */
@@ -40,6 +43,10 @@
             height: auto !important;
             border-radius: 0.5rem; /* rounded-lg */
         }
+        /* Style for file input button */
+        input[type="file"]::file-selector-button {
+            @apply font-semibold bg-blue-600 text-white hover:bg-blue-700 border-0 py-2 px-4 rounded-lg cursor-pointer transition-colors duration-200;
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-gray-200">
@@ -48,7 +55,7 @@
         
         <!-- Header -->
         <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-white">IT-WEHGEH QR Codes</h1>
+            <h1 class="text-4xl md:text-5xl font-bold text-white title-glow">IT-WEHGEH QR Codes</h1>
             <p class="text-lg text-blue-400 mt-2">Erstellen Sie schnell und einfach Ihre eigenen QR-Codes.</p>
         </header>
 
@@ -110,14 +117,47 @@
                     <!-- Customization Section -->
                     <div class="mt-8 pt-6 border-t border-slate-700">
                         <h3 class="text-lg font-semibold text-gray-100 mb-4">Anpassen</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="color-dark" class="block text-sm font-medium text-gray-300 mb-2">Vordergrund</label>
-                                <input type="color" id="color-dark" value="#3b82f6" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="color-dark" class="block text-sm font-medium text-gray-300 mb-2">Vordergrund</label>
+                                    <input type="color" id="color-dark" value="#3b82f6" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                                </div>
+                                <div>
+                                    <label for="color-light" class="block text-sm font-medium text-gray-300 mb-2">Hintergrund</label>
+                                    <input type="color" id="color-light" value="#0f172a" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                                </div>
+                            </div>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="dot-style" class="block text-sm font-medium text-gray-300 mb-2">Punkte-Stil</label>
+                                    <select id="dot-style" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                                        <option value="rounded" selected>Rund</option>
+                                        <option value="dots">Punkte</option>
+                                        <option value="classy">Elegant</option>
+                                        <option value="classy-rounded">Elegant (Rund)</option>
+                                        <option value="square">Quadratisch</option>
+                                        <option value="extra-rounded">Extra Rund</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="corner-style" class="block text-sm font-medium text-gray-300 mb-2">Ecken-Stil</label>
+                                    <select id="corner-style" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                                        <option value="" selected>Standard</option>
+                                        <option value="dot">Punkt</option>
+                                        <option value="square">Quadrat</option>
+                                        <option value="extra-rounded">Extra Rund</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
-                                <label for="color-light" class="block text-sm font-medium text-gray-300 mb-2">Hintergrund</label>
-                                <input type="color" id="color-light" value="#0f172a" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                                <label for="image-upload" class="block text-sm font-medium text-gray-300 mb-2">Logo hochladen (optional)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="file" id="image-upload" accept="image/png, image/jpeg, image/svg+xml" class="w-full text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-700">
+                                    <button id="remove-image" class="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white hidden">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -190,7 +230,12 @@
                 wifiHidden: document.getElementById('wifi-hidden'),
                 colorDark: document.getElementById('color-dark'),
                 colorLight: document.getElementById('color-light'),
+                dotStyle: document.getElementById('dot-style'),
+                cornerStyle: document.getElementById('corner-style'),
+                imageUpload: document.getElementById('image-upload'),
             };
+            
+            const removeImageBtn = document.getElementById('remove-image');
 
             // Download buttons
             const downloadPngBtn = document.getElementById('download-png');
@@ -198,21 +243,20 @@
 
             // --- State ---
             let activeTab = 'url';
+            let uploadedImage = null;
             
             // --- QR Code Instance ---
             const qrCode = new QRCodeStyling({
                 width: 280,
                 height: 280,
                 type: 'svg',
-                dotsOptions: {
-                    color: inputs.colorDark.value,
-                    type: 'rounded'
-                },
-                backgroundOptions: {
-                    color: inputs.colorLight.value,
-                },
                 qrOptions: {
                     errorCorrectionLevel: 'H'
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 8,
+                    imageSize: 0.4
                 }
             });
             
@@ -241,8 +285,13 @@
 
                 qrCode.update({
                     data: text,
+                    image: uploadedImage,
                     dotsOptions: {
-                        color: inputs.colorDark.value
+                        color: inputs.colorDark.value,
+                        type: inputs.dotStyle.value
+                    },
+                    cornersSquareOptions: {
+                        type: inputs.cornerStyle.value
                     },
                     backgroundOptions: {
                         color: inputs.colorLight.value
@@ -299,11 +348,36 @@
                 tabs[tabName].addEventListener('click', () => switchTab(tabName));
             });
 
-            // Input changes
+            // Input changes for all inputs
             Object.values(inputs).forEach(input => {
-                const eventType = (input.type === 'color' || input.type === 'select-one' || input.type === 'checkbox') ? 'change' : 'input';
+                if (input.id === 'image-upload') return; // Handled separately
+                const eventType = (input.type === 'color' || input.tagName === 'SELECT' || input.type === 'checkbox') ? 'change' : 'input';
                 input.addEventListener(eventType, updateQRCode);
             });
+            
+            // Image upload
+            inputs.imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => {
+                    uploadedImage = reader.result;
+                    removeImageBtn.classList.remove('hidden');
+                    updateQRCode();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Remove image
+            removeImageBtn.addEventListener('click', () => {
+                uploadedImage = null;
+                inputs.imageUpload.value = ''; // Reset file input
+                removeImageBtn.classList.add('hidden');
+                updateQRCode();
+            });
+
 
             // Download functionality
             downloadPngBtn.addEventListener('click', () => {
