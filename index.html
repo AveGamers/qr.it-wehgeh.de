@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT-WEHGEH QR Code Generator</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the active tab */
+        .tab-active {
+            background-color: #3b82f6; /* bg-blue-500 */
+            color: white;
+            border-color: #3b82f6; /* border-blue-500 */
+        }
+        /* Style for inactive tabs */
+        .tab-inactive {
+            background-color: #334155; /* slate-700 */
+            color: #d1d5db; /* gray-300 */
+            border-color: #4b5563; /* gray-600 */
+        }
+        /* Custom focus ring color */
+        .focus-ring-blue {
+            --tw-ring-color: #3b82f6;
+        }
+        /* Ensure the QR code canvas/img is responsive */
+        #qrcode canvas, #qrcode svg, #qrcode img {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-gray-200">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-white">IT-WEHGEH QR Codes</h1>
+            <p class="text-lg text-blue-400 mt-2">Erstellen Sie schnell und einfach Ihre eigenen QR-Codes.</p>
+        </header>
+
+        <main class="bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                
+                <!-- Left Column: Input & Customization -->
+                <div>
+                    <!-- Tab Navigation -->
+                    <div class="mb-6">
+                        <div class="flex border-b border-slate-700">
+                            <button id="tab-url" class="tab-btn tab-active flex-1 py-3 px-4 font-semibold text-center transition-colors duration-200 rounded-t-lg">URL</button>
+                            <button id="tab-text" class="tab-btn tab-inactive flex-1 py-3 px-4 font-semibold text-center transition-colors duration-200 rounded-t-lg">Text</button>
+                            <button id="tab-wifi" class="tab-btn tab-inactive flex-1 py-3 px-4 font-semibold text-center transition-colors duration-200 rounded-t-lg">WLAN</button>
+                        </div>
+                    </div>
+
+                    <!-- Input Panels -->
+                    <div id="panels">
+                        <!-- URL Panel -->
+                        <div id="panel-url" class="panel">
+                            <label for="url-input" class="block text-sm font-medium text-gray-300 mb-2">Webseiten-URL</label>
+                            <input type="url" id="url-input" placeholder="https://it-wehgeh.de" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                        </div>
+                        
+                        <!-- Text Panel -->
+                        <div id="panel-text" class="panel hidden">
+                            <label for="text-input" class="block text-sm font-medium text-gray-300 mb-2">Ihr Text</label>
+                            <textarea id="text-input" rows="4" placeholder="Geben Sie hier Ihren Text ein..." class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue"></textarea>
+                        </div>
+
+                        <!-- WiFi Panel -->
+                        <div id="panel-wifi" class="panel hidden">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="wifi-ssid" class="block text-sm font-medium text-gray-300 mb-2">Netzwerkname (SSID)</label>
+                                    <input type="text" id="wifi-ssid" placeholder="MeinWLAN" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                                </div>
+                                <div>
+                                    <label for="wifi-encryption" class="block text-sm font-medium text-gray-300 mb-2">Verschlüsselung</label>
+                                    <select id="wifi-encryption" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                                        <option value="WPA" selected>WPA/WPA2</option>
+                                        <option value="WEP">WEP</option>
+                                        <option value="nopass">Keine</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label for="wifi-password" class="block text-sm font-medium text-gray-300 mb-2">Passwort</label>
+                                <input type="password" id="wifi-password" placeholder="••••••••••" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring-blue">
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <input type="checkbox" id="wifi-hidden" class="h-4 w-4 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500">
+                                <label for="wifi-hidden" class="ml-2 block text-sm text-gray-200">Verstecktes Netzwerk</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customization Section -->
+                    <div class="mt-8 pt-6 border-t border-slate-700">
+                        <h3 class="text-lg font-semibold text-gray-100 mb-4">Anpassen</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="color-dark" class="block text-sm font-medium text-gray-300 mb-2">Vordergrund</label>
+                                <input type="color" id="color-dark" value="#3b82f6" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                            </div>
+                            <div>
+                                <label for="color-light" class="block text-sm font-medium text-gray-300 mb-2">Hintergrund</label>
+                                <input type="color" id="color-light" value="#0f172a" class="w-full h-10 p-1 bg-slate-700 border border-slate-600 rounded-lg cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: QR Code Preview & Download -->
+                <div class="flex flex-col items-center justify-center bg-slate-900/50 p-6 rounded-2xl border border-dashed border-slate-700">
+                    <h3 class="text-lg font-semibold text-gray-100 mb-4">Vorschau</h3>
+                    <div id="qrcode" class="w-full max-w-[280px] h-auto aspect-square"></div>
+                    <p id="qr-placeholder" class="text-gray-400 text-center mt-4">Geben Sie Daten ein, um einen QR-Code zu generieren.</p>
+                    
+                    <!-- Download Buttons -->
+                    <div id="download-buttons" class="mt-6 w-full max-w-[280px] hidden">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="download-png" class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                PNG
+                            </button>
+                            <button id="download-svg" class="w-full flex items-center justify-center gap-2 bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-700 transition-colors duration-200">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                SVG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-sm text-blue-400">
+            <div class="flex justify-center gap-6 mb-2">
+                <a href="https://impressum.it-wehgeh.de" target="_blank" class="hover:underline text-slate-300 hover:text-blue-400">Impressum</a>
+                <a href="https://it-wehgeh.de/privacy" target="_blank" class="hover:underline text-slate-300 hover:text-blue-400">Datenschutzerklärung</a>
+            </div>
+            <p class="text-slate-400">&copy; 2024 Copyright by IT-WEHGEH</p>
+        </footer>
+    </div>
+
+    <!-- Scripts are moved to the end of the body to prevent loading issues. -->
+    <!-- The new library script is loaded first. -->
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    
+    <!-- Our application script runs after the library is loaded. -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- DOM Elements ---
+            const qrcodeContainer = document.getElementById('qrcode');
+            const qrPlaceholder = document.getElementById('qr-placeholder');
+            const downloadButtons = document.getElementById('download-buttons');
+            
+            // Tabs and Panels
+            const tabs = {
+                url: document.getElementById('tab-url'),
+                text: document.getElementById('tab-text'),
+                wifi: document.getElementById('tab-wifi'),
+            };
+            const panels = {
+                url: document.getElementById('panel-url'),
+                text: document.getElementById('panel-text'),
+                wifi: document.getElementById('panel-wifi'),
+            };
+            
+            // Input fields
+            const inputs = {
+                url: document.getElementById('url-input'),
+                text: document.getElementById('text-input'),
+                wifiSsid: document.getElementById('wifi-ssid'),
+                wifiPass: document.getElementById('wifi-password'),
+                wifiEnc: document.getElementById('wifi-encryption'),
+                wifiHidden: document.getElementById('wifi-hidden'),
+                colorDark: document.getElementById('color-dark'),
+                colorLight: document.getElementById('color-light'),
+            };
+
+            // Download buttons
+            const downloadPngBtn = document.getElementById('download-png');
+            const downloadSvgBtn = document.getElementById('download-svg');
+
+            // --- State ---
+            let activeTab = 'url';
+            
+            // --- QR Code Instance ---
+            const qrCode = new QRCodeStyling({
+                width: 280,
+                height: 280,
+                type: 'svg',
+                dotsOptions: {
+                    color: inputs.colorDark.value,
+                    type: 'rounded'
+                },
+                backgroundOptions: {
+                    color: inputs.colorLight.value,
+                },
+                qrOptions: {
+                    errorCorrectionLevel: 'H'
+                }
+            });
+            
+            // Append the QR code to the container once
+            qrCode.append(qrcodeContainer);
+
+
+            // --- Functions ---
+
+            /**
+             * Generates the QR code based on current inputs
+             */
+            function updateQRCode() {
+                const text = getQrData();
+                
+                if (!text) {
+                    qrcodeContainer.classList.add('hidden');
+                    qrPlaceholder.classList.remove('hidden');
+                    downloadButtons.classList.add('hidden');
+                    return;
+                }
+                
+                qrcodeContainer.classList.remove('hidden');
+                qrPlaceholder.classList.add('hidden');
+                downloadButtons.classList.remove('hidden');
+
+                qrCode.update({
+                    data: text,
+                    dotsOptions: {
+                        color: inputs.colorDark.value
+                    },
+                    backgroundOptions: {
+                        color: inputs.colorLight.value
+                    }
+                });
+            }
+
+            /**
+             * Gathers data from the active tab's input fields
+             * @returns {string} The formatted string for the QR code
+             */
+            function getQrData() {
+                switch (activeTab) {
+                    case 'url':
+                        return inputs.url.value.trim();
+                    case 'text':
+                        return inputs.text.value.trim();
+                    case 'wifi':
+                        const ssid = inputs.wifiSsid.value.trim();
+                        const pass = inputs.wifiPass.value.trim();
+                        const enc = inputs.wifiEnc.value;
+                        const hidden = inputs.wifiHidden.checked;
+                        if (!ssid) return '';
+                        // Format: WIFI:T:<encryption>;S:<ssid>;P:<password>;H:<hidden>;;
+                        return `WIFI:T:${enc};S:${ssid};P:${pass};H:${hidden};;`;
+                    default:
+                        return '';
+                }
+            }
+
+            /**
+             * Switches the active tab and panel
+             * @param {string} tabName - The name of the tab to activate ('url', 'text', 'wifi')
+             */
+            function switchTab(tabName) {
+                activeTab = tabName;
+                
+                // Update tab styles
+                Object.values(tabs).forEach(tab => tab.classList.replace('tab-active', 'tab-inactive'));
+                tabs[tabName].classList.replace('tab-inactive', 'tab-active');
+
+                // Show/hide panels
+                Object.values(panels).forEach(panel => panel.classList.add('hidden'));
+                panels[tabName].classList.remove('hidden');
+                
+                // Regenerate QR code for the new tab
+                updateQRCode();
+            }
+
+            // --- Event Listeners ---
+
+            // Tab switching
+            Object.keys(tabs).forEach(tabName => {
+                tabs[tabName].addEventListener('click', () => switchTab(tabName));
+            });
+
+            // Input changes
+            Object.values(inputs).forEach(input => {
+                const eventType = (input.type === 'color' || input.type === 'select-one' || input.type === 'checkbox') ? 'change' : 'input';
+                input.addEventListener(eventType, updateQRCode);
+            });
+
+            // Download functionality
+            downloadPngBtn.addEventListener('click', () => {
+                qrCode.download({ name: "it-wehgeh-qr-code", extension: "png" });
+            });
+
+            downloadSvgBtn.addEventListener('click', () => {
+                qrCode.download({ name: "it-wehgeh-qr-code", extension: "svg" });
+            });
+
+            // --- Initial Call ---
+            // Set initial value for URL input for demonstration
+            inputs.url.value = 'https://it-wehgeh.de';
+            updateQRCode();
+        });
+    </script>
+</body>
+</html>
